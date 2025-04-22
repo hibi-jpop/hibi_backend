@@ -1,0 +1,523 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dineug/erd-editor/main/json-schema/schema.json",
+  "version": "3.0.0",
+  "settings": {
+    "width": 2000,
+    "height": 2000,
+    "scrollTop": -137.2756,
+    "scrollLeft": -85.8632,
+    "zoomLevel": 0.91,
+    "show": 511,
+    "database": 4,
+    "databaseName": "hibi",
+    "canvasType": "@dineug/erd-editor/builtin-generator-code",
+    "language": 1,
+    "tableNameCase": 4,
+    "columnNameCase": 2,
+    "bracketType": 1,
+    "relationshipDataTypeSync": true,
+    "relationshipOptimization": false,
+    "columnOrder": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "maxWidthComment": -1,
+    "ignoreSaveSettings": 0
+  },
+  "doc": {
+    "tableIds": [
+      "qhKnIJaSyGPKEz7RjPNQt",
+      "61ZaE8h07FZKYV9IEclQx",
+      "gdQd0T7F_bQAACyOAgboC",
+      "PxghByFHrvDXqFKFq8547",
+      "QQ4wfIw4GdxKPsqXnxQPh",
+      "N3q-ohi1W-7DSnufsNjxP",
+      "uelIBFy0rn6VkHl9XbMBM",
+      "Dzx3NRRi9eW78LVTa63M1",
+      "vGdGc50hVfwrGY_yAeRC_",
+      "xVLeqWwAgpvb9e9iUVY-k",
+      "wtVSBJPA_XS4zj76dyEQC",
+      "Fo9z_kLXdo--sRVI74glO",
+      "84jkyTDhSunHY-gMauu3I",
+      "86XzyGNNdajGydBC9OiJc"
+    ],
+    "relationshipIds": [],
+    "indexIds": [],
+    "memoIds": []
+  },
+  "collections": {
+    "tableEntities": {
+      "qhKnIJaSyGPKEz7RjPNQt": {
+        "id": "qhKnIJaSyGPKEz7RjPNQt",
+        "name": "member",
+        "comment": "회원과 관련된 테이블",
+        "columnIds": [
+          "2B980BDoTf2L1bFGh_L-v"
+        ],
+        "seqColumnIds": [
+          "2B980BDoTf2L1bFGh_L-v"
+        ],
+        "ui": {
+          "x": 391,
+          "y": 269,
+          "zIndex": 2,
+          "widthName": 60,
+          "widthComment": 117,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745285151828,
+          "createAt": 1745285076973
+        }
+      },
+      "61ZaE8h07FZKYV9IEclQx": {
+        "id": "61ZaE8h07FZKYV9IEclQx",
+        "name": "song",
+        "comment": "노래를 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 844,
+          "y": 271,
+          "zIndex": 20,
+          "widthName": 60,
+          "widthComment": 129,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745285460790,
+          "createAt": 1745285443402
+        }
+      },
+      "gdQd0T7F_bQAACyOAgboC": {
+        "id": "gdQd0T7F_bQAACyOAgboC",
+        "name": "artist",
+        "comment": "아티스트를 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 839,
+          "y": 428,
+          "zIndex": 26,
+          "widthName": 60,
+          "widthComment": 153,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745285565614,
+          "createAt": 1745285462440
+        }
+      },
+      "PxghByFHrvDXqFKFq8547": {
+        "id": "PxghByFHrvDXqFKFq8547",
+        "name": "comments",
+        "comment": "댓글을 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 917,
+          "y": 590,
+          "zIndex": 37,
+          "widthName": 60,
+          "widthComment": 129,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745285624416,
+          "createAt": 1745285567712
+        }
+      },
+      "QQ4wfIw4GdxKPsqXnxQPh": {
+        "id": "QQ4wfIw4GdxKPsqXnxQPh",
+        "name": "song_likes",
+        "comment": "어떤 노래에 좋아요를 눌렀는지 체크하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 679,
+          "y": 840,
+          "zIndex": 53,
+          "widthName": 60,
+          "widthComment": 258,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745290199081,
+          "createAt": 1745285627104
+        }
+      },
+      "N3q-ohi1W-7DSnufsNjxP": {
+        "id": "N3q-ohi1W-7DSnufsNjxP",
+        "name": "comments_likes",
+        "comment": "댓글에 달린 좋아요를 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 1370,
+          "y": 592,
+          "zIndex": 64,
+          "widthName": 86,
+          "widthComment": 207,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745290127995,
+          "createAt": 1745285717815
+        }
+      },
+      "uelIBFy0rn6VkHl9XbMBM": {
+        "id": "uelIBFy0rn6VkHl9XbMBM",
+        "name": "comments_dislikes",
+        "comment": "댓글에 달린 싫어요를 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 1372,
+          "y": 663,
+          "zIndex": 71,
+          "widthName": 101,
+          "widthComment": 207,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745290134437,
+          "createAt": 1745285840844
+        }
+      },
+      "Dzx3NRRi9eW78LVTa63M1": {
+        "id": "Dzx3NRRi9eW78LVTa63M1",
+        "name": "admin",
+        "comment": "관리자 계정 여부를 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 32.6264,
+          "y": 134.1319,
+          "zIndex": 77,
+          "widthName": 60,
+          "widthComment": 195,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745301412148,
+          "createAt": 1745285879780
+        }
+      },
+      "vGdGc50hVfwrGY_yAeRC_": {
+        "id": "vGdGc50hVfwrGY_yAeRC_",
+        "name": "follow_list",
+        "comment": "팔로우하는 아티스트를  저장한 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 1299,
+          "y": 417,
+          "zIndex": 81,
+          "widthName": 60,
+          "widthComment": 207,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745287661213,
+          "createAt": 1745287080538
+        }
+      },
+      "xVLeqWwAgpvb9e9iUVY-k": {
+        "id": "xVLeqWwAgpvb9e9iUVY-k",
+        "name": "related_song",
+        "comment": "노래에 저장되어있는 연관곡을 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 1312,
+          "y": 267,
+          "zIndex": 88,
+          "widthName": 70,
+          "widthComment": 255,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745289178166,
+          "createAt": 1745288188870
+        }
+      },
+      "wtVSBJPA_XS4zj76dyEQC": {
+        "id": "wtVSBJPA_XS4zj76dyEQC",
+        "name": "faq",
+        "comment": "FAQ를 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 143,
+          "y": 812,
+          "zIndex": 98,
+          "widthName": 60,
+          "widthComment": 127,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745289230304,
+          "createAt": 1745289220411
+        }
+      },
+      "Fo9z_kLXdo--sRVI74glO": {
+        "id": "Fo9z_kLXdo--sRVI74glO",
+        "name": "question",
+        "comment": "문의사항을 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 140,
+          "y": 720,
+          "zIndex": 104,
+          "widthName": 60,
+          "widthComment": 153,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745291998096,
+          "createAt": 1745289232858
+        }
+      },
+      "QMmBG6qEfFAyiT_pU4eqT": {
+        "id": "QMmBG6qEfFAyiT_pU4eqT",
+        "name": "comments_best",
+        "comment": "게시글에서 가장 큰 (좋아요 - 싫어요)",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 1375,
+          "y": 736,
+          "zIndex": 120,
+          "widthName": 85,
+          "widthComment": 198,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745290235190,
+          "createAt": 1745290200923
+        }
+      },
+      "84jkyTDhSunHY-gMauu3I": {
+        "id": "84jkyTDhSunHY-gMauu3I",
+        "name": "report",
+        "comment": "신고한 댓글에 대한 정보를 저장하는 테이블 ",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 139,
+          "y": 646,
+          "zIndex": 121,
+          "widthName": 60,
+          "widthComment": 238,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745292019095,
+          "createAt": 1745291998909
+        }
+      },
+      "86XzyGNNdajGydBC9OiJc": {
+        "id": "86XzyGNNdajGydBC9OiJc",
+        "name": "notification",
+        "comment": "알림을 저장하는 테이블",
+        "columnIds": [],
+        "seqColumnIds": [],
+        "ui": {
+          "x": 141,
+          "y": 560,
+          "zIndex": 123,
+          "widthName": 62,
+          "widthComment": 129,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1745292210825,
+          "createAt": 1745292198784
+        }
+      }
+    },
+    "tableColumnEntities": {
+      "2B980BDoTf2L1bFGh_L-v": {
+        "id": "2B980BDoTf2L1bFGh_L-v",
+        "tableId": "qhKnIJaSyGPKEz7RjPNQt",
+        "name": "",
+        "comment": "",
+        "dataType": "",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1745285149718,
+          "createAt": 1745285149718
+        }
+      }
+    },
+    "relationshipEntities": {},
+    "indexEntities": {},
+    "indexColumnEntities": {},
+    "memoEntities": {}
+  },
+  "lww": {
+    "qhKnIJaSyGPKEz7RjPNQt": [
+      "tableEntities",
+      1745285076971,
+      -1,
+      {
+        "name": 1745285140121,
+        "comment": 1745285147478
+      }
+    ],
+    "settings.databaseName": [
+      "settings",
+      -1,
+      -1,
+      {
+        "databaseName": 1745285115440
+      }
+    ],
+    "2B980BDoTf2L1bFGh_L-v": [
+      "tableColumnEntities",
+      1745285149717,
+      -1,
+      {}
+    ],
+    "61ZaE8h07FZKYV9IEclQx": [
+      "tableEntities",
+      1745285443401,
+      -1,
+      {
+        "name": 1745285455401,
+        "comment": 1745285460789
+      }
+    ],
+    "gdQd0T7F_bQAACyOAgboC": [
+      "tableEntities",
+      1745285462440,
+      -1,
+      {
+        "name": 1745285558318,
+        "comment": 1745285565614
+      }
+    ],
+    "PxghByFHrvDXqFKFq8547": [
+      "tableEntities",
+      1745285567711,
+      -1,
+      {
+        "name": 1745285577570,
+        "comment": 1745285624416
+      }
+    ],
+    "QQ4wfIw4GdxKPsqXnxQPh": [
+      "tableEntities",
+      1745285627103,
+      -1,
+      {
+        "name": 1745285691592,
+        "comment": 1745285708597
+      }
+    ],
+    "N3q-ohi1W-7DSnufsNjxP": [
+      "tableEntities",
+      1745285717814,
+      -1,
+      {
+        "name": 1745285838325,
+        "comment": 1745290127994
+      }
+    ],
+    "uelIBFy0rn6VkHl9XbMBM": [
+      "tableEntities",
+      1745285840843,
+      -1,
+      {
+        "name": 1745285853835,
+        "comment": 1745290134437
+      }
+    ],
+    "Dzx3NRRi9eW78LVTa63M1": [
+      "tableEntities",
+      1745285879779,
+      -1,
+      {
+        "name": 1745285883191,
+        "comment": 1745285898134
+      }
+    ],
+    "vGdGc50hVfwrGY_yAeRC_": [
+      "tableEntities",
+      1745287080537,
+      -1,
+      {
+        "name": 1745287456045,
+        "comment": 1745287661212
+      }
+    ],
+    "xVLeqWwAgpvb9e9iUVY-k": [
+      "tableEntities",
+      1745288188869,
+      -1,
+      {
+        "name": 1745288332028,
+        "comment": 1745289178165
+      }
+    ],
+    "wtVSBJPA_XS4zj76dyEQC": [
+      "tableEntities",
+      1745289220410,
+      -1,
+      {
+        "name": 1745289226548,
+        "comment": 1745289230303
+      }
+    ],
+    "Fo9z_kLXdo--sRVI74glO": [
+      "tableEntities",
+      1745289232857,
+      -1,
+      {
+        "name": 1745289243572,
+        "comment": 1745289386511
+      }
+    ],
+    "QMmBG6qEfFAyiT_pU4eqT": [
+      "tableEntities",
+      1745290200918,
+      1745291764090,
+      {
+        "name": 1745290212475,
+        "comment": 1745290235190
+      }
+    ],
+    "84jkyTDhSunHY-gMauu3I": [
+      "tableEntities",
+      1745291998908,
+      -1,
+      {
+        "name": 1745292000941,
+        "comment": 1745292016503
+      }
+    ],
+    "86XzyGNNdajGydBC9OiJc": [
+      "tableEntities",
+      1745292198783,
+      -1,
+      {
+        "name": 1745292203230,
+        "comment": 1745292207752
+      }
+    ]
+  }
+}
