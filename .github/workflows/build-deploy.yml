@@ -24,6 +24,12 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_HOST }}
+        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+
       
     - name: Build with Gradle Wrapper
       run: ./gradlew build
