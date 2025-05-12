@@ -102,12 +102,6 @@ jobs:
           # 새 JAR 파일 실행 파일로 설정
           mv *.jar hibi-app.jar
 
-          # 환경 변수와 함께 nohup으로 서버 실행
-          export DATABASE_URL='${{ secrets.DATABASE_URL }}'
-          export DATABASE_NAME='${{ secrets.DATABASE_NAME }}'
-          export DATABASE_USERNAME='${{ secrets.DATABASE_USERNAME }}'
-          export DATABASE_PASSWORD='${{ secrets.DATABASE_PASSWORD }}'
-
           # 로그 파일 정리
           if [ -f nohup.out ]; then
             mv nohup.out nohup.out.$(date +%Y%m%d%H%M%S)
