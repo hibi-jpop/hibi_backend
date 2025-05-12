@@ -22,6 +22,16 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Setup Gradle Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
       
@@ -32,6 +42,17 @@ jobs:
         DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
         DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
         DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+
+    - name: Display test report summary
+      if: always()  # 이전 단계 성공/실패 여부 관계없이 항상 실행
+      run: |
+        if [ -f build/reports/tests/test/index.html ]; then
+          echo "=== Test Report Summary ==="
+          cat build/test-results/test/*.xml | grep -E "testsuite|testcase|failure"
+          echo "=========================="
+        else
+          echo "Test report not found"
+        fi
 
     - name: Upload JAR as artifact
       uses: actions/upload-artifact@v4
