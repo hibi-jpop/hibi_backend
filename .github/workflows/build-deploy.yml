@@ -81,11 +81,6 @@ jobs:
     
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-        DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
@@ -123,7 +118,12 @@ jobs:
           if [ -f nohup.out ]; then
             mv nohup.out nohup.out.$(date +%Y%m%d%H%M%S)
           fi
-      
+          # 환경변수 설정 (복합 URL 구성에 필요한 변수들)
+          export DATABASE_URL='${{ secrets.DATABASE_URL }}'
+          export DATABASE_NAME='${{ secrets.DATABASE_NAME }}'
+          export DATABASE_USERNAME='${{ secrets.DATABASE_USERNAME }}'
+          export DATABASE_PASSWORD='${{ secrets.DATABASE_PASSWORD }}'
+
           # nohup으로 서버 실행
           nohup java -jar hibi-app.jar > nohup.out 2>&1 &
         
