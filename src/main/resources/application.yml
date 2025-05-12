@@ -1,0 +1,63 @@
+# application.yml
+
+# 서버 설정
+server:
+  port: 8080  # 서버 포트 (기본값은 8080)
+
+# Spring 프로파일 설정
+spring:
+  profiles:
+    active: dev  # dev, prod 등 환경별 프로파일 설정
+
+  # 데이터베이스 연결 설정
+  datasource:
+    url: jdbc:mysql://${DATABASE_URL}:3306/${DATABASE_NAME}
+    username: ${DATABASE_USERNAME} # MySQL DB 사용자명
+    password: ${DATABASE_PASSWORD} # MySQL DB 비밀번호
+    driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL 드라이버 클래스
+    hikari:
+      pool-name: HikariCP
+      maximum-pool-size: 10  # 최대 커넥션 풀 사이즈
+
+  # JPA 설정 (Hibernate)
+  jpa:
+    hibernate:
+      ddl-auto: update  # 자동 스키마 관리 (none, update, create, create-drop)
+    show-sql: true  # 실행된 SQL 쿼리를 콘솔에 출력
+    properties:
+      hibernate:
+        format_sql: true  # SQL 포매팅
+
+#  # 로깅 설정
+#  logging:
+#    level:
+#      root: INFO  # 전체 로그 레벨
+#      org.springframework.web: DEBUG  # Spring Web 관련 로그 레벨 설정
+#
+#  # Thymeleaf 설정 (템플릿 엔진을 사용하는 경우)
+#  thymeleaf:
+#    cache: false  # 개발 시 캐시를 끄기 (배포 시에는 true로 설정)
+#
+#  # 액추에이터 설정
+#  management:
+#    endpoints:
+#      web:
+#        exposure:
+#          include: health,info  # 외부에 노출할 액추에이터 엔드포인트
+#
+## 프로파일별 설정 예시 (dev, prod 등)
+#---
+#spring:
+#  profiles: dev
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/devdb
+#    username: devuser
+#    password: devpassword
+#
+#---
+#spring:
+#  profiles: prod
+#  datasource:
+#    url: jdbc:mysql://prod-db-host:3306/proddb
+#    username: produser
+#    password: prodpassword
