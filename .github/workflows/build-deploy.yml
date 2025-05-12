@@ -81,6 +81,11 @@ jobs:
     
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
