@@ -99,8 +99,20 @@ jobs:
             fi
           fi
       
-          # 새 JAR 파일 실행 파일로 설정
-          mv *.jar hibi-app.jar
+          # 새 JAR 파일 확인 및 실행 파일로 설정
+          if ls *SNAPSHOT.jar 1> /dev/null 2>&1; then
+            # SNAPSHOT.jar 파일이 존재하는 경우
+            mv *SNAPSHOT.jar hibi-app.jar
+            echo "SNAPSHOT.jar 파일을 hibi-app.jar로 이름 변경 완료"
+          elif ls *.jar 1> /dev/null 2>&1; then
+            # 다른 JAR 파일이 존재하는 경우 (SNAPSHOT 접미사가 없는 경우)
+            mv *.jar hibi-app.jar
+            echo "JAR 파일을 hibi-app.jar로 이름 변경 완료"
+          else
+            # JAR 파일이 없는 경우
+            echo "오류: JAR 파일을 찾을 수 없습니다."
+            exit 1
+          fi
 
           # 로그 파일 정리
           if [ -f nohup.out ]; then
