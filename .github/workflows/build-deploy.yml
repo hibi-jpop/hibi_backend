@@ -118,14 +118,13 @@ jobs:
           if [ -f nohup.out ]; then
             mv nohup.out nohup.out.$(date +%Y%m%d%H%M%S)
           fi
-          # 환경변수 설정 (복합 URL 구성에 필요한 변수들)
-          export DATABASE_URL='${{ secrets.DATABASE_URL }}'
-          export DATABASE_NAME='${{ secrets.DATABASE_NAME }}'
-          export DATABASE_USERNAME='${{ secrets.DATABASE_USERNAME }}'
-          export DATABASE_PASSWORD='${{ secrets.DATABASE_PASSWORD }}'
+          # 환경변수 대신 Java 시스템 속성으로 전달
+          nohup java \
+          -Dspring.datasource.url="jdbc:mysql://${{ secrets.DATABASE_URL }}:3306/${{ secrets.DATABASE_NAME }}" \
+          -Dspring.datasource.username="${{ secrets.DATABASE_USERNAME }}" \
+          -Dspring.datasource.password="${{ secrets.DATABASE_PASSWORD }}" \
+          -jar hibi-app.jar > nohup.out 2>&1 &
 
-          # nohup으로 서버 실행
-          nohup java -jar hibi-app.jar > nohup.out 2>&1 &
         
           echo "서버가 백그라운드에서 실행 중입니다"
           # 프로세스 실행 확인
