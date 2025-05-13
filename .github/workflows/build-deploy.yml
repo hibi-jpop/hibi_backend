@@ -106,6 +106,8 @@ jobs:
           # nohup java -jar hibi-app.jar > nohup.out 2>&1 &
           nohup java \
             -Dspring.datasource.url=jdbc:mysql://${{ secrets.DATABASE_URL }}:3306/${{ secrets.DATABASE_NAME }} \
+            -Dspring.datasource.username=${{ secrets.DATABASE_USERNAME }}\
+            -Dspring.datasource.password=${{ secrets.DATABASE_PASSWORD }} \
             -jar hibi-app.jar > nohup.out 2>&1 &
           echo "서버가 백그라운드에서 실행 중입니다"
           # 프로세스 실행 확인
