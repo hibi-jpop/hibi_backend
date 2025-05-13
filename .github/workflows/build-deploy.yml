@@ -13,23 +13,23 @@ jobs:
     permissions:
       contents: read
 
-    # MySQL 서비스 추가
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
-          MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
-          MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+    # # MySQL 서비스 추가
+    # services:
+    #   mysql:
+    #     image: mysql:8.0
+    #     env:
+    #       MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+    #       MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
+    #       MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
+    #       MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+    #     ports:
+    #       - 3306:3306
+    #     options: >-
+    #       --health-cmd="mysqladmin ping -h localhost"
+    #       --health-interval=10s
+    #       --health-timeout=5s
+    #       --health-retries=3
 
 
     steps:
