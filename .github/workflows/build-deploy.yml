@@ -13,25 +13,6 @@ jobs:
     permissions:
       contents: read
 
-    # # MySQL 서비스 추가
-    # services:
-    #   mysql:
-    #     image: mysql:8.0
-    #     env:
-    #       MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-    #       MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
-    #       MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
-    #       MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-
-    #     ports:
-    #       - 3306:3306
-    #     options: >-
-    #       --health-cmd="mysqladmin ping -h localhost"
-    #       --health-interval=10s
-    #       --health-timeout=5s
-    #       --health-retries=3
-
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -84,6 +65,11 @@ jobs:
     
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
