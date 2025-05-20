@@ -1,5 +1,5 @@
 package com.hibi.server.domain.member.entity;
 
-public enum RoleType {
+public enum UserRoleType {
     USER, ADMIN
 }

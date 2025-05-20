@@ -1,4 +1,4 @@
-package com.hibi.server.global.config.security.jwt;
+package com.hibi.server.domain.auth.jwt;
 
 import java.security.Key;
 import java.util.Date;
@@ -17,10 +17,10 @@ import io.jsonwebtoken.security.Keys;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${}")
+    @Value("${jwt.expiration}")
     private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {

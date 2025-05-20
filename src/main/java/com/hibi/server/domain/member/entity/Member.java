@@ -44,7 +44,7 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private RoleType role;
+    private UserRoleType role;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -54,13 +54,13 @@ public class Member {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Member(String email, String password, String nickname, ProviderType provider, String providerId, String profileUrl, RoleType role) {
+    public Member(String email, String password, String nickname, ProviderType provider, String providerId, String profileUrl, UserRoleType role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.provider = provider;
         this.providerId = providerId;
         this.profileUrl = profileUrl;
-        this.role = (role != null) ? role : RoleType.USER; // 기본값 설정
+        this.role = (role != null) ? role : UserRoleType.USER; // 기본값 설정
     }
 }
