@@ -6,7 +6,9 @@ import com.hibi.server.domain.auth.jwt.JwtUtils;
 import com.hibi.server.domain.auth.jwt.UserDetailsImpl;
 import com.hibi.server.domain.member.entity.Member;
 import com.hibi.server.domain.member.repository.MemberRepository;
+import com.hibi.server.global.exception.AuthException;
 import com.hibi.server.global.exception.CustomException;
+import com.hibi.server.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+
+import static com.hibi.server.global.exception.ErrorCode.EMAIL_ALREADY_EXISTS;
+import static com.hibi.server.global.exception.ErrorCode.NICKNAME_ALREADY_EXISTS;
 
 @Service
 @RequiredArgsConstructor
@@ -33,16 +38,18 @@ public class AuthService {
      * 회원가입 처리
      */
     @Transactional
-    public SigninResponse signUp(SignUpRequest request) {
+    public ApiResponse signUp(SignUpRequest request) {
         // 이메일 중복 확인
         if (memberRepository.existsByEmail(request.email())) {
-            throw new CustomException("이미 사용 중인 이메일입니다.", HttpStatus.BAD_REQUEST);
+            throw new AuthException(EMAIL_ALREADY_EXISTS);
         }
 
         // 닉네임 중복 확인
         if (memberRepository.existsByNickname(request.nickname())) {
-            throw new CustomException("이미 사용 중인 닉네임입니다.", HttpStatus.BAD_REQUEST);
+            throw new AuthException(NICKNAME_ALREADY_EXISTS);
         }
+
+        // 여기
 
         // 회원 엔티티 생성 및 저장
         Member member = Member.builder()
