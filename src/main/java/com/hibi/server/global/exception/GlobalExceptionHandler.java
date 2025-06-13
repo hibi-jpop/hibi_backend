@@ -17,7 +17,7 @@ import java.net.URI;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @Value("${api.base-url")
+    @Value("${api.base-url}")
     private String apiBaseUrl;
 
     // --- 공통 ProblemDetail 생성 헬퍼 메서드 ---
