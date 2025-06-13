@@ -2,9 +2,10 @@ package com.hibi.server.domain.auth.controller;
 
 import com.hibi.server.domain.auth.dto.request.SignInRequest;
 import com.hibi.server.domain.auth.dto.request.SignUpRequest;
+import com.hibi.server.domain.auth.dto.response.ReissueResponse;
 import com.hibi.server.domain.auth.dto.response.SignInResponse;
 import com.hibi.server.domain.auth.service.AuthService;
-import com.hibi.server.global.response.ApiResponse;
+import com.hibi.server.global.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<ApiResponse> signup(@Valid @RequestBody SignUpRequest request) {
-        return ResponseEntity.ok(authService.signUp(request));
+    public ResponseEntity<SuccessResponse<?>> signup(@Valid @RequestBody SignUpRequest request) {
+        authService.signUp(request);
+        return ResponseEntity.ok(SuccessResponse.success("회원가입에 성공했습니다."));
     }
 
     @PostMapping("/sign-in")
@@ -41,5 +43,10 @@ public class AuthController {
     @GetMapping("/check-nickname")
     public ResponseEntity<Boolean> checkNicknameAvailability(@RequestParam String nickname) {
         return ResponseEntity.ok(authService.isNicknameAvailable(nickname));
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<ReissueResponse> reissueTokens(@RequestParam String refreshToken) {
+        return ResponseEntity.ok(authService.reissueTokens(refreshToken));
     }
 }

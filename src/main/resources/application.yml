@@ -17,7 +17,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL 드라이버 클래스
     hikari:
       pool-name: HikariCP
-      maximum-pool-size: 10  # 최대 커넥션 풀 사이즈
 
   # JPA 설정 (Hibernate)
   jpa:
@@ -27,6 +26,10 @@ spring:
     properties:
       hibernate:
         format_sql: true  # SQL 포매팅
+jwt:
+  secret: yourVerySecretKeyForAccessTokenGenerationWhichIsLongEnoughForHS256AlgorithmThankYouVeryMuch
+  expiration: 3600
+  refresh-expiration: 604800
 
 api:
   version: v1

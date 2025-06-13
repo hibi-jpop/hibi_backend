@@ -1,16 +1,17 @@
 package com.hibi.server.domain.auth.service;
 
+import com.hibi.server.domain.auth.dto.CustomUserDetails;
 import com.hibi.server.domain.auth.dto.request.SignInRequest;
 import com.hibi.server.domain.auth.dto.request.SignUpRequest;
+import com.hibi.server.domain.auth.dto.response.ReissueResponse;
+import com.hibi.server.domain.auth.dto.response.SignInResponse;
 import com.hibi.server.domain.auth.jwt.JwtUtils;
-import com.hibi.server.domain.auth.jwt.UserDetailsImpl;
 import com.hibi.server.domain.member.entity.Member;
 import com.hibi.server.domain.member.repository.MemberRepository;
 import com.hibi.server.global.exception.AuthException;
 import com.hibi.server.global.exception.CustomException;
-import com.hibi.server.global.response.ApiResponse;
+import com.hibi.server.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,8 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
 
 import static com.hibi.server.global.exception.ErrorCode.EMAIL_ALREADY_EXISTS;
 import static com.hibi.server.global.exception.ErrorCode.NICKNAME_ALREADY_EXISTS;
@@ -34,24 +33,15 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
-    /**
-     * 회원가입 처리
-     */
     @Transactional
-    public ApiResponse signUp(SignUpRequest request) {
-        // 이메일 중복 확인
+    public void signUp(SignUpRequest request) {
         if (memberRepository.existsByEmail(request.email())) {
             throw new AuthException(EMAIL_ALREADY_EXISTS);
         }
-
-        // 닉네임 중복 확인
         if (memberRepository.existsByNickname(request.nickname())) {
             throw new AuthException(NICKNAME_ALREADY_EXISTS);
         }
 
-        // 여기
-
-        // 회원 엔티티 생성 및 저장
         Member member = Member.builder()
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
@@ -59,48 +49,55 @@ public class AuthService {
                 .build();
 
         memberRepository.save(member);
-
-        // 가입 후 자동 로그인 처리
-        return authenticateUser(request.email(), request.password());
     }
 
-    /**
-     * 로그인 처리
-     */
     @Transactional
-    public SigninResponse signIn(SignInRequest request) {
+    public SignInResponse signIn(SignInRequest request) {
         return authenticateUser(request.email(), request.password());
     }
 
-    /**
-     * 로그아웃 처리
-     */
     @Transactional
     public void signOut(Long memberId) {
         // Redis 기반 토큰 저장소를 사용한다면 여기서 토큰 무효화 처리
         // 현재는 클라이언트에서 토큰 삭제만 수행하도록 함
     }
 
-    /**
-     * 이메일 사용 가능 여부 확인
-     */
     @Transactional(readOnly = true)
     public boolean isEmailAvailable(String email) {
         return !memberRepository.existsByEmail(email);
     }
 
-    /**
-     * 닉네임 사용 가능 여부 확인
-     */
     @Transactional(readOnly = true)
     public boolean isNicknameAvailable(String nickname) {
         return !memberRepository.existsByNickname(nickname);
     }
 
-    /**
-     * 인증 처리 및 토큰 발급 공통 메서드
-     */
-    private SigninResponse authenticateUser(String email, String password) {
+    @Transactional
+    public ReissueResponse reissueTokens(String refreshToken) {
+        if (!jwtUtils.validateJwtToken(refreshToken)) {
+            throw new CustomException("유효하지 않은 리프레시 토큰입니다.", ErrorCode.BAD_CREDENTIALS);
+        }
+
+        Member member = memberRepository.findByEmail(jwtUtils.getEmailFromJwtToken(refreshToken))
+                .orElseThrow(() -> new CustomException("사용자를 찾을 수 없습니다.", ErrorCode.BAD_CREDENTIALS));
+
+        CustomUserDetails userDetails = new CustomUserDetails(member); // CustomUserDetails 생성자가 Member를 받도록 수정 필요
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String newAccessToken = jwtUtils.generateAccessToken(authentication);
+//      String newRefreshToken = jwtUtils.generateRefreshToken(authentication);
+
+        return ReissueResponse.from(newAccessToken);
+    }
+
+    private SignInResponse authenticateUser(String email, String password) {
         // Spring Security 인증 처리
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password));
@@ -108,27 +105,15 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // JWT 토큰 생성
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        String accessToken = jwtUtils.generateAccessToken(authentication);
+        String refreshToken = jwtUtils.generateRefreshToken(authentication);
 
         // 사용자 정보 조회
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Member member = memberRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new CustomException("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
-
-        // 토큰 만료 시간 계산
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 3600000); // 1시간 (밀리초)
-        long expiresIn = (expiryDate.getTime() - now.getTime()) / 1000; // 초 단위로 변환
+                .orElseThrow(() -> new CustomException("사용자를 찾을 수 없습니다.", ErrorCode.BAD_CREDENTIALS));
 
         // 응답 생성
-        return new SigninResponse(
-                jwt,                   // 접근 토큰
-                "Bearer",              // 토큰 타입
-                expiresIn,             // 만료 시간(초)
-                member.getId(),        // 회원 ID
-                member.getNickname(),  // 닉네임
-                member.getEmail(),     // 이메일
-                member.getProfileUrl() // 프로필 이미지 URL
-        );
+        return SignInResponse.of(accessToken, refreshToken);
     }
 }
