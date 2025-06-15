@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Slf4j
@@ -25,6 +27,15 @@ public class JwtUtils {
 
     @Value("${jwt.refresh-expiration}")
     private int jwtRefreshExpiration;
+
+    public LocalDateTime getRefreshTokenExpiryDate() {
+        long expiryTimeMillis = new Date().getTime() + jwtRefreshExpiration;
+        Date expiryDate = new Date(expiryTimeMillis);
+
+        return expiryDate.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
 
     public String generateJwtToken(UserDetails userPrincipal, int jwtExpirationMs) {
         return Jwts.builder()

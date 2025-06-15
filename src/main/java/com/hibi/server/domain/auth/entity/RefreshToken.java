@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "refresh_tokens")
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA는 기본 생성자를 필요로 합니다.
-@AllArgsConstructor(access = AccessLevel.PRIVATE) // 빌더 패턴 사용을 위한 AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +38,17 @@ public class RefreshToken {
     @Column(name = "revoked", nullable = false)
     private boolean revoked;
 
+    public static RefreshToken of(Member member, String tokenValue, LocalDateTime expiryDate, LocalDateTime issuedAt) {
+        return RefreshToken.builder()
+                .member(member)
+                .tokenValue(tokenValue)
+                .previousTokenValue(null)
+                .expiryDate(expiryDate)
+                .issuedAt(issuedAt)
+                .revoked(false)
+                .build();
+    }
+
     public void revoke() {
         this.revoked = true;
     }
@@ -48,4 +59,6 @@ public class RefreshToken {
         this.expiryDate = newExpiryDate;
         this.issuedAt = newIssuedAt;
     }
+
+
 }
