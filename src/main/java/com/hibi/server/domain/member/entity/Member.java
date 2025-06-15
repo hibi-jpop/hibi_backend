@@ -1,10 +1,7 @@
 package com.hibi.server.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -13,8 +10,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "members")
+@Builder
 @SQLDelete(sql = "UPDATE members SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at is null")
 public class Member {
@@ -54,14 +53,22 @@ public class Member {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @Builder
-    public Member(String email, String password, String nickname, ProviderType provider, String providerId, String profileUrl, UserRoleType role) {
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.provider = provider;
-        this.providerId = providerId;
-        this.profileUrl = profileUrl;
-        this.role = (role != null) ? role : UserRoleType.USER; // 기본값 설정
+    public static Member of(
+            final String email,
+            final String password,
+            final String nickname,
+            final ProviderType provider,
+            final String providerId,
+            final String profileUrl,
+            final UserRoleType role) {
+        return Member.builder()
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .provider(provider)
+                .providerId(providerId)
+                .profileUrl(profileUrl)
+                .role(role)
+                .build();
     }
 }

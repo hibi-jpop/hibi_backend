@@ -7,6 +7,8 @@ import com.hibi.server.domain.auth.dto.response.ReissueResponse;
 import com.hibi.server.domain.auth.dto.response.SignInResponse;
 import com.hibi.server.domain.auth.jwt.JwtUtils;
 import com.hibi.server.domain.member.entity.Member;
+import com.hibi.server.domain.member.entity.ProviderType;
+import com.hibi.server.domain.member.entity.UserRoleType;
 import com.hibi.server.domain.member.repository.MemberRepository;
 import com.hibi.server.global.exception.AuthException;
 import com.hibi.server.global.exception.CustomException;
@@ -42,18 +44,55 @@ public class AuthService {
             throw new AuthException(NICKNAME_ALREADY_EXISTS);
         }
 
-        Member member = Member.builder()
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .nickname(request.nickname())
-                .build();
+        Member member = Member.of(
+                request.email(),
+                passwordEncoder.encode(request.password()),
+                request.nickname(),
+                ProviderType.NATIVE,
+                null,
+                null,
+                UserRoleType.USER
+        );
 
         memberRepository.save(member);
     }
 
     @Transactional
     public SignInResponse signIn(SignInRequest request) {
-        return authenticateUser(request.email(), request.password());
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String accessToken = jwtUtils.generateAccessToken(authentication);
+        String refreshToken = jwtUtils.generateRefreshToken(authentication);
+
+        return SignInResponse.of(accessToken, refreshToken);
+    }
+
+    @Transactional
+    public ReissueResponse reissueTokens(String refreshToken) {
+        if (!jwtUtils.validateJwtToken(refreshToken)) {
+            throw new CustomException(ErrorCode.JWT_INVALID_TOKEN);
+        }
+
+        Member member = memberRepository.findByEmail(jwtUtils.getEmailFromJwtToken(refreshToken))
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REFRESH_TOKEN));
+
+        CustomUserDetails userDetails = new CustomUserDetails(member);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String newAccessToken = jwtUtils.generateAccessToken(authentication);
+        String newRefreshToken = jwtUtils.generateRefreshToken(authentication);
+
+        return ReissueResponse.of(newAccessToken, newRefreshToken);
     }
 
     @Transactional
@@ -72,48 +111,5 @@ public class AuthService {
         return !memberRepository.existsByNickname(nickname);
     }
 
-    @Transactional
-    public ReissueResponse reissueTokens(String refreshToken) {
-        if (!jwtUtils.validateJwtToken(refreshToken)) {
-            throw new CustomException("유효하지 않은 리프레시 토큰입니다.", ErrorCode.BAD_CREDENTIALS);
-        }
 
-        Member member = memberRepository.findByEmail(jwtUtils.getEmailFromJwtToken(refreshToken))
-                .orElseThrow(() -> new CustomException("사용자를 찾을 수 없습니다.", ErrorCode.BAD_CREDENTIALS));
-
-        CustomUserDetails userDetails = new CustomUserDetails(member); // CustomUserDetails 생성자가 Member를 받도록 수정 필요
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String newAccessToken = jwtUtils.generateAccessToken(authentication);
-//      String newRefreshToken = jwtUtils.generateRefreshToken(authentication);
-
-        return ReissueResponse.from(newAccessToken);
-    }
-
-    private SignInResponse authenticateUser(String email, String password) {
-        // Spring Security 인증 처리
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // JWT 토큰 생성
-        String accessToken = jwtUtils.generateAccessToken(authentication);
-        String refreshToken = jwtUtils.generateRefreshToken(authentication);
-
-        // 사용자 정보 조회
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Member member = memberRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new CustomException("사용자를 찾을 수 없습니다.", ErrorCode.BAD_CREDENTIALS));
-
-        // 응답 생성
-        return SignInResponse.of(accessToken, refreshToken);
-    }
 }

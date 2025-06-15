@@ -7,10 +7,15 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Builder(access = PRIVATE)
 public record ReissueResponse(
-        @NotNull String accessToken
+        @NotNull String accessToken,
+        @NotNull String refreshToken
+
 ) {
 
-    public static ReissueResponse from(final String accessToken) {
-        return ReissueResponse.builder().accessToken(accessToken).build();
+    public static ReissueResponse of(final String accessToken, final String refreshToken) {
+        return ReissueResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }
