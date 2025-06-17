@@ -17,6 +17,7 @@ public enum ErrorCode {
     JWT_MISSING_TOKEN("A005", "토큰이 누락되었습니다.", HttpStatus.UNAUTHORIZED),
     REFRESH_TOKEN_NOT_FOUND("A006", "리프레시 토큰을 찾을 수 없습니다.", HttpStatus.UNAUTHORIZED),
     INVALID_REFRESH_TOKEN("A007", "유효하지 않은 리프레시 토큰입니다.", HttpStatus.UNAUTHORIZED),
+    REPLAY_ATTACK("A008", "만료된 토큰을 사용하였습니다.", HttpStatus.UNAUTHORIZED),
 
     // 인증 과정 관련
     AUTHENTICATION_FAILED("A010", "인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),

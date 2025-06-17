@@ -3,7 +3,6 @@ package com.hibi.server.domain.auth.service;
 import com.hibi.server.domain.auth.dto.CustomUserDetails;
 import com.hibi.server.domain.auth.dto.request.SignInRequest;
 import com.hibi.server.domain.auth.dto.request.SignUpRequest;
-import com.hibi.server.domain.auth.dto.response.ReissueResponse;
 import com.hibi.server.domain.auth.dto.response.SignInResponse;
 import com.hibi.server.domain.auth.jwt.JwtUtils;
 import com.hibi.server.domain.member.entity.Member;
@@ -11,9 +10,8 @@ import com.hibi.server.domain.member.entity.ProviderType;
 import com.hibi.server.domain.member.entity.UserRoleType;
 import com.hibi.server.domain.member.repository.MemberRepository;
 import com.hibi.server.global.exception.AuthException;
-import com.hibi.server.global.exception.CustomException;
-import com.hibi.server.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.hibi.server.global.exception.ErrorCode.EMAIL_ALREADY_EXISTS;
 import static com.hibi.server.global.exception.ErrorCode.NICKNAME_ALREADY_EXISTS;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -33,6 +32,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public void signUp(SignUpRequest request) {
@@ -61,43 +61,17 @@ public class AuthService {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        long memberId = customUserDetails.getId();
         String accessToken = jwtUtils.generateAccessToken(authentication);
-        String refreshToken = jwtUtils.generateRefreshToken(authentication);
+        String refreshToken = refreshTokenService.createAndSaveRefreshToken(memberId, authentication);
 
         return SignInResponse.of(accessToken, refreshToken);
     }
 
     @Transactional
-    public ReissueResponse reissueTokens(String refreshToken) {
-        if (!jwtUtils.validateJwtToken(refreshToken)) {
-            throw new CustomException(ErrorCode.JWT_INVALID_TOKEN);
-        }
-
-        Member member = memberRepository.findByEmail(jwtUtils.getEmailFromJwtToken(refreshToken))
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REFRESH_TOKEN));
-
-        CustomUserDetails userDetails = new CustomUserDetails(member);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
-        );
-
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String newAccessToken = jwtUtils.generateAccessToken(authentication);
-        String newRefreshToken = jwtUtils.generateRefreshToken(authentication);
-
-        return ReissueResponse.of(newAccessToken, newRefreshToken);
-    }
-
-    @Transactional
     public void signOut(Long memberId) {
-        // Redis 기반 토큰 저장소를 사용한다면 여기서 토큰 무효화 처리
-        // 현재는 클라이언트에서 토큰 삭제만 수행하도록 함
+        refreshTokenService.invalidateAllRefreshTokensForMember(memberId);
     }
 
     @Transactional(readOnly = true)

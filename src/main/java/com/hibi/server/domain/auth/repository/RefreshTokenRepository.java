@@ -4,6 +4,7 @@ import com.hibi.server.domain.auth.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,5 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     // 특정 memberId의 모든 RefreshToken 조회 (revoked 상태 무관)
     List<RefreshToken> findByMemberId(Long memberId);
 
-    // 만료된 토큰 조회 (주기적인 삭제 배치 작업용)
-    List<RefreshToken> findByExpiryDateBefore(java.time.LocalDateTime now);
+    void deleteByExpiryDateBefore(LocalDateTime dateTime);
 }

@@ -7,13 +7,13 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -21,10 +21,8 @@ public class JwtUtils {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
-
     @Value("${jwt.expiration}")
     private int jwtExpiration;
-
     @Value("${jwt.refresh-expiration}")
     private int jwtRefreshExpiration;
 
@@ -37,9 +35,12 @@ public class JwtUtils {
                 .toLocalDateTime();
     }
 
-    public String generateJwtToken(UserDetails userPrincipal, int jwtExpirationMs) {
+    public String generateJwtToken(CustomUserDetails userPrincipal, int jwtExpirationMs) {
+        Map<String, Object> claims = Jwts.claims().setSubject(userPrincipal.getUsername());
+        claims.put("memberId", userPrincipal.getId());
+
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setClaims(claims) // Subject 대신 claims 맵 사용
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)
@@ -47,12 +48,12 @@ public class JwtUtils {
     }
 
     public String generateAccessToken(Authentication authentication) {
-        UserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
         return generateJwtToken(userPrincipal, jwtExpiration);
     }
 
     public String generateRefreshToken(Authentication authentication) {
-        UserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
         return generateJwtToken(userPrincipal, jwtRefreshExpiration);
     }
 
@@ -63,6 +64,15 @@ public class JwtUtils {
     public String getEmailFromJwtToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Long getMemberIdFromJwtToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("memberId", Long.class);
     }
 
     public boolean validateJwtToken(String authToken) {

@@ -28,7 +28,13 @@ public class SecurityConfig {
     private static final String[] AUTH_WHITE_LIST = {
             "/api/v1/auth/sign-in",
             "/api/v1/auth/sign-up",
-            "/api/v1/**", // TODO: JWT기능 개발 완료시 삭제 필요
+
+            // Swagger UI
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+
+//            "/api/v1/**", // TODO: JWT기능 개발 완료시 삭제 필요
     };
 
     private final AuthEntryPointHandler unauthorizedHandler;
@@ -66,10 +72,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(AUTH_WHITE_LIST).permitAll()
-                                .anyRequest()
-                                .authenticated())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(AUTH_WHITE_LIST).permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider());
 

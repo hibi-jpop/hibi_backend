@@ -1,7 +1,8 @@
 package com.hibi.server.domain.member.service;
 
 
-import java.util.List;
+import org.springframework.stereotype.Service;
 
-public interface MemberService {
+@Service
+public class MemberService {
 }

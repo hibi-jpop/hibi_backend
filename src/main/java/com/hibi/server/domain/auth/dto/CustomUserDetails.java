@@ -31,7 +31,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; // 이메일을 ID로 사용
+        return email;
     }
 
     @Override
@@ -39,25 +39,6 @@ public class CustomUserDetails implements UserDetails {
         return password;
     }
 
-//    // 계정 상태 관련 설정
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return true; // Soft delete 처리한 경우 여기에 deleted_at 검사 추가 가능
-//    }
+    
 }
 

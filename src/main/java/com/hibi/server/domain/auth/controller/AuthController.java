@@ -5,6 +5,7 @@ import com.hibi.server.domain.auth.dto.request.SignUpRequest;
 import com.hibi.server.domain.auth.dto.response.ReissueResponse;
 import com.hibi.server.domain.auth.dto.response.SignInResponse;
 import com.hibi.server.domain.auth.service.AuthService;
+import com.hibi.server.domain.auth.service.RefreshTokenService;
 import com.hibi.server.global.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<SuccessResponse<?>> signup(@Valid @RequestBody SignUpRequest request) {
@@ -47,6 +49,6 @@ public class AuthController {
 
     @PostMapping("/reissue")
     public ResponseEntity<ReissueResponse> reissueTokens(@RequestParam String refreshToken) {
-        return ResponseEntity.ok(authService.reissueTokens(refreshToken));
+        return ResponseEntity.ok(refreshTokenService.reissueTokens(refreshToken));
     }
 }
