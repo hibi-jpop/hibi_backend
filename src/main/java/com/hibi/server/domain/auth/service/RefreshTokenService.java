@@ -37,12 +37,11 @@ public class RefreshTokenService {
         existingTokens.forEach(RefreshToken::revoke);
 
         String newRefreshTokenValue = jwtUtils.generateRefreshToken(authentication);
-        String hashedNewRefreshToken = passwordEncoder.encode(newRefreshTokenValue); // 해싱
 
         RefreshToken newRefreshToken = RefreshToken.of(
                 memberRepository.findById(memberId)
                         .orElseThrow(() -> new CustomException(ErrorCode.BAD_CREDENTIALS)),
-                hashedNewRefreshToken,
+                newRefreshTokenValue,
                 jwtUtils.getRefreshTokenExpiryDate(),
                 LocalDateTime.now()
         );
