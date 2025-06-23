@@ -4,6 +4,7 @@ package com.hibi.server.global.config;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.models.GroupedOpenApi;
@@ -16,7 +17,8 @@ import org.springframework.context.annotation.Configuration;
                 title = "Hibi API",
                 description = "Hibi API 명세",
                 version = "v1"
-        )
+        ),
+        security = @SecurityRequirement(name = "BearerAuth")
 )
 @SecurityScheme(
         name = "BearerAuth",

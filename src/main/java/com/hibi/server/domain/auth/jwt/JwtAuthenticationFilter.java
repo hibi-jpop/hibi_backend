@@ -47,9 +47,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    //TODO : JwtUtils로 옮기기
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
-
+        log.info("Authorization header: {}", headerAuth);
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
         }

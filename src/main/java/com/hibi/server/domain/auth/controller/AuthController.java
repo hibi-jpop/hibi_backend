@@ -32,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/sign-out")
-    public ResponseEntity<Void> signout(@RequestParam Long memberId) {
+    public ResponseEntity<Void> signOut(@RequestParam Long memberId) {
         authService.signOut(memberId);
         return ResponseEntity.ok().build();
     }

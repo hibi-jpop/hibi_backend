@@ -75,6 +75,7 @@ public class JwtUtils {
         return claims.get("memberId", Long.class);
     }
 
+    // TODO : 내가 만든 에러코드로 반환하기
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
