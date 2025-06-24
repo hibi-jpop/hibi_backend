@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -60,6 +61,15 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
         log.error("[AuthenticationException] : {}", ex.getMessage());
         ProblemDetail problemDetail = createProblemDetail(status, ErrorCode.AUTHENTICATION_FAILED);
+        return ResponseEntity.status(status).body(problemDetail);
+    }
+
+    // --- 클라이언트 요청 유효성 검사 관련 예외 처리 ---
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ProblemDetail> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        log.error("[HttpMessageNotReadableException] : {}", e.getMessage());
+        ProblemDetail problemDetail = createProblemDetail(status, ErrorCode.INVALID_INPUT_VALUE);
         return ResponseEntity.status(status).body(problemDetail);
     }
 
