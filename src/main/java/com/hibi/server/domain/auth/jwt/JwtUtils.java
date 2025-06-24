@@ -1,6 +1,8 @@
 package com.hibi.server.domain.auth.jwt;
 
 import com.hibi.server.domain.auth.dto.CustomUserDetails;
+import com.hibi.server.global.exception.AuthException;
+import com.hibi.server.global.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -75,21 +77,22 @@ public class JwtUtils {
         return claims.get("memberId", Long.class);
     }
 
-    // TODO : 내가 만든 에러코드로 반환하기
-    public boolean validateJwtToken(String authToken) {
+    public void validateJwtToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
-            return true;
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
+            throw new AuthException(ErrorCode.JWT_INVALID_TOKEN);
         } catch (ExpiredJwtException e) {
             log.error("JWT token is expired: {}", e.getMessage());
+            throw new AuthException(ErrorCode.JWT_EXPIRED_TOKEN);
         } catch (UnsupportedJwtException e) {
             log.error("JWT token is unsupported: {}", e.getMessage());
+            throw new AuthException(ErrorCode.JWT_UNSUPPORTED_TOKEN);
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
+            throw new AuthException(ErrorCode.JWT_MISSING_TOKEN);
         }
-
-        return false;
     }
+
 }
