@@ -1,10 +1,10 @@
 package com.hibi.server.domain.member.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Table(name = "members")
 @Builder
 @SQLDelete(sql = "UPDATE members SET deleted_at = NOW() WHERE id = ?")
-@SQLRestriction("deleted_at is null")
 public class Member {
 
     @Id
@@ -70,5 +69,21 @@ public class Member {
                 .profileUrl(profileUrl)
                 .role(role)
                 .build();
+    }
+
+    public void updateNickname(@NotBlank String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updatePasswordHash(@NotBlank String password) {
+        this.password = password;
+    }
+
+    public void softDelete(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public boolean isDeleted() {
+        return this.deletedAt != null;
     }
 }

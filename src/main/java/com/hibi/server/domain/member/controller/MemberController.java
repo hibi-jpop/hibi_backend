@@ -1,13 +1,21 @@
 package com.hibi.server.domain.member.controller;
 
 import com.hibi.server.domain.auth.dto.CustomUserDetails;
+import com.hibi.server.domain.member.dto.request.MemberUpdateRequest;
+import com.hibi.server.domain.member.dto.response.AvailabilityResponse;
 import com.hibi.server.domain.member.dto.response.MemberProfileResponse;
 import com.hibi.server.domain.member.service.MemberService;
 import com.hibi.server.global.annotation.AuthMember;
+import com.hibi.server.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.function.BiFunction;
 
 @RestController
 @RequestMapping("/api/v1/members")
@@ -19,49 +27,91 @@ public class MemberController {
     @Operation(
             description = "accessToken을 통해 정보를 조회하므로 빈 JSON 형식({})을 보내면 요청이 갑니다."
     )
-    @GetMapping("/profile")
-    public ResponseEntity<MemberProfileResponse> getMyInfo(@AuthMember CustomUserDetails userDetails) {
+    @GetMapping("/me")
+    public ResponseEntity<SuccessResponse<MemberProfileResponse>> getMyInfo(@AuthMember CustomUserDetails userDetails) {
         long memberId = userDetails.getId();
-        return ResponseEntity.ok(memberService.getMemberProfileById(memberId));
+        MemberProfileResponse memberProfile = memberService.getMemberProfileById(memberId);
+        return ResponseEntity.ok(SuccessResponse.success("내 정보 조회에 성공했습니다.", memberProfile));
     }
 
-//    @PutMapping("/me")
-//    public ResponseEntity<?> updateMyInfo(/* @AuthenticationPrincipal UserDetails userDetails, */
-//            @Valid @RequestBody MemberUpdateRequest request) {
-//        // 임시 응답
-//        return ResponseEntity.ok("내 정보 수정 성공 (임시 응답)");
-//    }
-
-    @DeleteMapping("/profile")
-    public ResponseEntity<?> withdrawMember(/* @AuthenticationPrincipal UserDetails userDetails */) {
-        // 임시 응답
-        return ResponseEntity.ok("회원 탈퇴 성공 (임시 응답)");
+    @Operation(
+            summary = "인증된 회원 정보 부분 수정 (닉네임, 비밀번호 등)",
+            description = "현재 로그인된 회원의 닉네임 또는 비밀번호 등 일부 정보를 수정합니다. 요청 본문에 포함된 필드만 변경됩니다."
+    )
+    @PatchMapping("/me")
+    public ResponseEntity<SuccessResponse<MemberProfileResponse>> updateMyPartialInfo(
+            @AuthMember CustomUserDetails userDetails,
+            @Valid @RequestBody MemberUpdateRequest request) {
+        long memberId = userDetails.getId();
+        MemberProfileResponse updatedProfile = memberService.updateMemberInfo(memberId, request);
+        return ResponseEntity.ok(SuccessResponse.success("내 정보 수정에 성공했습니다.", updatedProfile));
     }
 
+    @Operation(
+            summary = "인증된 회원 탈퇴",
+            description = "현재 로그인된 회원의 계정을 탈퇴합니다."
+    )
+    @DeleteMapping("/me")
+    public ResponseEntity<SuccessResponse<?>> withdrawMember(@AuthMember CustomUserDetails userDetails) {
+        memberService.withdrawMember(userDetails.getId());
+        return ResponseEntity.ok(SuccessResponse.success("회원 탈퇴에 성공했습니다."));
+    }
+
+    @Operation(
+            summary = "특정 회원 정보 조회 (관리자용)",
+            description = "특정 memberId를 가진 회원의 프로필 정보를 조회합니다. 관리자 권한이 필요할 수 있습니다."
+    )
     @GetMapping("/{memberId}")
-    // @PreAuthorize("hasRole('ADMIN')") // Spring Security 사용 시 권한 설정
-    public ResponseEntity<?> getMemberById(@PathVariable Long memberId) {
-        // 임시 응답
-        return ResponseEntity.ok(memberId + "번 회원 정보 조회 성공 (임시 응답)");
+    public ResponseEntity<SuccessResponse<MemberProfileResponse>> getMemberById(@PathVariable Long memberId) {
+        MemberProfileResponse memberProfile = memberService.getMemberProfileById(memberId);
+        return ResponseEntity.ok(SuccessResponse.success(memberId + "번 회원 정보 조회 성공", memberProfile));
     }
 
+    @Operation(
+            summary = "모든 회원 정보 조회 (관리자용)",
+            description = "모든 회원의 정보를 조회합니다. 관리자 권한이 필요할 수 있습니다."
+    )
     @GetMapping
-    // @PreAuthorize("hasRole('ADMIN')") // Spring Security 사용 시 권한 설정
-    public ResponseEntity<?> getAllMembers() {
-        // 임시 응답
-        return ResponseEntity.ok("모든 회원 정보 조회 성공 (임시 응답)");
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SuccessResponse<?>> getAllMembers() {
+        List<MemberProfileResponse> allMembers = memberService.getAllMembers();
+        return ResponseEntity.ok(SuccessResponse.success("모든 회원 정보 조회 성공", allMembers));
     }
 
+    @Operation(
+            summary = "이메일 사용 가능 여부 확인",
+            description = "주어진 이메일이 현재 사용 가능한지 확인합니다."
+    )
     @GetMapping("/check-email")
-    public ResponseEntity<?> checkEmailAvailability(@RequestParam String email) {
-        // 임시 응답
-        return ResponseEntity.ok(email + " 이메일 사용 가능 여부 확인 (임시 응답)");
+    public ResponseEntity<SuccessResponse<AvailabilityResponse>> checkEmailAvailability(@RequestParam String email) {
+        boolean isAvailable = memberService.checkEmailAvailability(email);
+        return buildAvailabilityResponse(email, isAvailable, AvailabilityResponse::forEmail);
     }
 
+    @Operation(
+            summary = "닉네임 사용 가능 여부 확인",
+            description = "주어진 닉네임이 현재 사용 가능한지 확인합니다."
+    )
     @GetMapping("/check-nickname")
-    public ResponseEntity<?> checkNicknameAvailability(@RequestParam String nickname) {
-        // 임시 응답
-        return ResponseEntity.ok(nickname + " 닉네임 사용 가능 여부 확인 (임시 응답)");
+    public ResponseEntity<SuccessResponse<AvailabilityResponse>> checkNicknameAvailability(@RequestParam String nickname) {
+        boolean isAvailable = memberService.checkNicknameAvailability(nickname);
+        return buildAvailabilityResponse(nickname, isAvailable, AvailabilityResponse::forNickname);
     }
 
+    private ResponseEntity<SuccessResponse<AvailabilityResponse>> buildAvailabilityResponse(
+            String target,
+            boolean isAvailable,
+            BiFunction<String, Boolean, AvailabilityResponse> responseFactory
+    ) {
+        String message = isAvailable
+                ? target + "은(는) 사용 가능합니다."
+                : target + "은(는) 이미 사용 중입니다.";
+
+        AvailabilityResponse response = responseFactory.apply(target, isAvailable);
+        return ResponseEntity.ok(SuccessResponse.success(message, response));
+    }
+
+    //TODO : 아이디 찾기
+    //TODO : 비밀번호 찾기
+    //TODO : OAuth
 }

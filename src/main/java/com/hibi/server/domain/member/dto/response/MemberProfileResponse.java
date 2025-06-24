@@ -1,6 +1,7 @@
 package com.hibi.server.domain.member.dto.response;
 
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hibi.server.domain.member.entity.Member;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -8,16 +9,28 @@ import java.time.LocalDateTime;
 import static lombok.AccessLevel.PRIVATE;
 
 @Builder(access = PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record MemberProfileResponse(
-        @NotNull String email,
-        @NotNull String nickname,
-        @NotNull LocalDateTime createdAt
+        Long id,
+        String email,
+        String nickname,
+        LocalDateTime createdAt
 ) {
+
+    public static MemberProfileResponse from(Member member) {
+        return MemberProfileResponse.builder()
+                .id(member.getId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .createdAt(member.getCreatedAt())
+                .build();
+    }
+
     public static MemberProfileResponse of(
-            final String email,
-            final String nickname,
-            final LocalDateTime createdAt
+            final String nickname
     ) {
-        return new MemberProfileResponse(email, nickname, createdAt);
+        return MemberProfileResponse.builder()
+                .nickname(nickname)
+                .build();
     }
 }

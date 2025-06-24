@@ -51,9 +51,8 @@ public class RefreshTokenService {
 
     @Transactional
     public ReissueResponse reissueTokens(String submittedRefreshToken) {
-        if (!jwtUtils.validateJwtToken(submittedRefreshToken)) {
-            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
-        }
+        jwtUtils.validateJwtToken(submittedRefreshToken);
+
         Long memberId = jwtUtils.getMemberIdFromJwtToken(submittedRefreshToken);
         if (memberId == null) {
             throw new CustomException(ErrorCode.AUTHENTICATION_FAILED);

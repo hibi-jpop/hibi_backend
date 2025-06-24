@@ -27,28 +27,18 @@ public class AuthController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<SignInResponse> signIn(@Valid @RequestBody SignInRequest request) {
-        return ResponseEntity.ok(authService.signIn(request));
+    public ResponseEntity<SuccessResponse<SignInResponse>> signIn(@Valid @RequestBody SignInRequest request) {
+        return ResponseEntity.ok(SuccessResponse.success("로그인에 성공하였습니다.", authService.signIn(request)));
     }
 
     @PostMapping("/sign-out")
-    public ResponseEntity<Void> signOut(@RequestParam Long memberId) {
+    public ResponseEntity<SuccessResponse<?>> signOut(@RequestParam Long memberId) {
         authService.signOut(memberId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(SuccessResponse.success("로그아웃하였습니다."));
     }
-
-    @GetMapping("/check-email")
-    public ResponseEntity<Boolean> checkEmailAvailability(@RequestParam String email) {
-        return ResponseEntity.ok(authService.isEmailAvailable(email));
-    }
-
-    @GetMapping("/check-nickname")
-    public ResponseEntity<Boolean> checkNicknameAvailability(@RequestParam String nickname) {
-        return ResponseEntity.ok(authService.isNicknameAvailable(nickname));
-    }
-
+    
     @PostMapping("/reissue")
-    public ResponseEntity<ReissueResponse> reissueTokens(@RequestParam String refreshToken) {
-        return ResponseEntity.ok(refreshTokenService.reissueTokens(refreshToken));
+    public ResponseEntity<SuccessResponse<ReissueResponse>> reissueTokens(@RequestParam String refreshToken) {
+        return ResponseEntity.ok(SuccessResponse.success("토큰 재발급에 성공하였습니다.", refreshTokenService.reissueTokens(refreshToken)));
     }
 }
