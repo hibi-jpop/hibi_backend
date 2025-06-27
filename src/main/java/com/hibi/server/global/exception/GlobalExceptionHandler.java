@@ -27,13 +27,13 @@ public class GlobalExceptionHandler {
     private ProblemDetail createProblemDetail(HttpStatus status, ErrorCode errorCode) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, errorCode.getMessage());
         problemDetail.setTitle(status.getReasonPhrase());
-        problemDetail.setType(URI.create(apiBaseUrl + getProblemTypePath(errorCode)));
+        problemDetail.setType(URI.create("http://" + apiBaseUrl + getProblemTypePath(errorCode)));
 
         try {
             problemDetail.setInstance(URI.create(ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUriString()));
         } catch (IllegalStateException e) {
             log.warn("요청 경로 요청 중 오류가 발생했습니다. {}", e.getMessage());
-            problemDetail.setInstance(URI.create(apiBaseUrl + "/errors/unknown-instance"));
+            problemDetail.setInstance(URI.create("http://" + apiBaseUrl + "/errors/unknown-instance"));
         }
 
         problemDetail.setProperty("errorCode", errorCode.getCode());
