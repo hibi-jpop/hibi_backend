@@ -14,10 +14,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,24 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String jwt = parseJwt(request);
-
-        log.info("Request URI: {}", request.getRequestURI());
-        log.info("Request Method: {}", request.getMethod());
-        log.info("Request Headers: {}", Collections.list(request.getHeaderNames())
-                .stream()
-                .collect(Collectors.toMap(h -> h, request::getHeader)));
-        log.info("Request Params: {}", request.getParameterMap());
-
-
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader reader = request.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append(System.lineSeparator());
-            }
-        }
-
-        log.info("Request Body: {}", sb.toString());
 
         if (jwt != null) {
             jwtUtils.validateJwtToken(jwt);
