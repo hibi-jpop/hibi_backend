@@ -59,7 +59,7 @@ public class MemberController {
             summary = "특정 회원 정보 조회 (관리자용)",
             description = "특정 memberId를 가진 회원의 프로필 정보를 조회합니다. 관리자 권한이 필요할 수 있습니다."
     )
-    @GetMapping("/{memberId}")
+    @GetMapping("/info/{memberId}")
     public ResponseEntity<SuccessResponse<MemberProfileResponse>> getMemberById(@PathVariable Long memberId) {
         MemberProfileResponse memberProfile = memberService.getMemberProfileById(memberId);
         return ResponseEntity.ok(SuccessResponse.success(memberId + "번 회원 정보 조회 성공", memberProfile));

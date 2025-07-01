@@ -29,14 +29,14 @@ public class MemberService {
     private final MemberValidator memberValidator;
 
     public MemberProfileResponse getMemberProfileById(long id) {
-        return memberRepository.findById(id)
-                .map(MemberProfileResponse::from)
+        return memberRepository.findByIdAndDeletedAtIsNull(id)
+                .map(member -> MemberProfileResponse.of(member.getNickname()))
                 .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
     }
 
     @Transactional
     public MemberProfileResponse updateMemberInfo(long memberId, MemberUpdateRequest request) {
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
 
         String nickname = request.nickname();
