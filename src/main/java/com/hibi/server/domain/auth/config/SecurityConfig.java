@@ -24,8 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private static final String[] AUTH_WHITE_LIST = {
-            "/api/v1/auth/sign-in",
-            "/api/v1/auth/sign-up",
+            "/api/v1/auth/**",
 
             // Swagger UI
             "/v3/api-docs/**",
@@ -33,6 +32,7 @@ public class SecurityConfig {
             "/swagger-ui.html",
 
 //            "/api/v1/**", // TODO: JWT기능 개발 완료시 삭제 필요
+//            "/**",
     };
 
     private final AuthEntryPointHandler unauthorizedHandler;

@@ -2,7 +2,6 @@ package com.hibi.server.domain.member.controller;
 
 import com.hibi.server.domain.auth.dto.CustomUserDetails;
 import com.hibi.server.domain.member.dto.request.MemberUpdateRequest;
-import com.hibi.server.domain.member.dto.response.AvailabilityResponse;
 import com.hibi.server.domain.member.dto.response.MemberProfileResponse;
 import com.hibi.server.domain.member.service.MemberService;
 import com.hibi.server.global.annotation.AuthMember;
@@ -15,14 +14,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.function.BiFunction;
 
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final MemberService memberService; // 실제 서비스 주입
+    private final MemberService memberService;
 
     @Operation(
             description = "accessToken을 통해 정보를 조회하므로 빈 JSON 형식({})을 보내면 요청이 갑니다."
@@ -78,38 +76,6 @@ public class MemberController {
         return ResponseEntity.ok(SuccessResponse.success("모든 회원 정보 조회 성공", allMembers));
     }
 
-    @Operation(
-            summary = "이메일 사용 가능 여부 확인",
-            description = "주어진 이메일이 현재 사용 가능한지 확인합니다."
-    )
-    @GetMapping("/check-email")
-    public ResponseEntity<SuccessResponse<AvailabilityResponse>> checkEmailAvailability(@RequestParam String email) {
-        boolean isAvailable = memberService.checkEmailAvailability(email);
-        return buildAvailabilityResponse(email, isAvailable, AvailabilityResponse::forEmail);
-    }
-
-    @Operation(
-            summary = "닉네임 사용 가능 여부 확인",
-            description = "주어진 닉네임이 현재 사용 가능한지 확인합니다."
-    )
-    @GetMapping("/check-nickname")
-    public ResponseEntity<SuccessResponse<AvailabilityResponse>> checkNicknameAvailability(@RequestParam String nickname) {
-        boolean isAvailable = memberService.checkNicknameAvailability(nickname);
-        return buildAvailabilityResponse(nickname, isAvailable, AvailabilityResponse::forNickname);
-    }
-
-    private ResponseEntity<SuccessResponse<AvailabilityResponse>> buildAvailabilityResponse(
-            String target,
-            boolean isAvailable,
-            BiFunction<String, Boolean, AvailabilityResponse> responseFactory
-    ) {
-        String message = isAvailable
-                ? target + "은(는) 사용 가능합니다."
-                : target + "은(는) 이미 사용 중입니다.";
-
-        AvailabilityResponse response = responseFactory.apply(target, isAvailable);
-        return ResponseEntity.ok(SuccessResponse.success(message, response));
-    }
 
     //TODO : 아이디 찾기
     //TODO : 비밀번호 찾기

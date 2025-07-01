@@ -28,7 +28,13 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS("A020", "이미 등록된 이메일입니다.", HttpStatus.CONFLICT), // 409 Conflict
     NICKNAME_ALREADY_EXISTS("A021", "이미 사용 중인 닉네임입니다.", HttpStatus.CONFLICT),
     INVALID_PASSWORD_PATTERN("A022", "비밀번호 형식이 올바르지 않습니다.", HttpStatus.BAD_REQUEST), // 400 Bad Request
-
+    EMAIL_REQUIRED("A023", "이메일은 필수 입력 값입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL_FORMAT("A024", "유효하지 않은 이메일 형식입니다.", HttpStatus.BAD_REQUEST),
+    PASSWORD_REQUIRED("A025", "비밀번호는 필수 입력 값입니다.", HttpStatus.BAD_REQUEST),
+    PASSWORD_TOO_SHORT("A026", "비밀번호는 최소 8자 이상이어야 합니다.", HttpStatus.BAD_REQUEST),
+    NICKNAME_REQUIRED("A027", "닉네임은 필수 입력 값입니다.", HttpStatus.BAD_REQUEST),
+    NICKNAME_INVALID_LENGTH("A028", "닉네임은 2자 이상 20자 이하이어야 합니다.", HttpStatus.BAD_REQUEST),
+    
     // --- 일반적인 에러 코드 ---
     INVALID_INPUT_VALUE("C001", "잘못된 입력 값입니다.", HttpStatus.BAD_REQUEST), // 400 Bad Request
     ENTITY_NOT_FOUND("C002", "요청하신 자원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND), // 404 Not Found
