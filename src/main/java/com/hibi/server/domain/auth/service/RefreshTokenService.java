@@ -58,9 +58,8 @@ public class RefreshTokenService {
             throw new CustomException(ErrorCode.AUTHENTICATION_FAILED);
         }
 
-        String hashedSubmittedRefreshToken = passwordEncoder.encode(submittedRefreshToken);
-
-        Optional<RefreshToken> currentTokenRecordOpt = refreshTokenRepository.findByMemberIdAndTokenValueAndRevokedFalse(memberId, hashedSubmittedRefreshToken);
+        Optional<RefreshToken> currentTokenRecordOpt = refreshTokenRepository
+                .findByMemberIdAndTokenValueAndRevokedFalse(memberId, submittedRefreshToken);
 
         if (currentTokenRecordOpt.isPresent()) {
             RefreshToken currentTokenRecord = currentTokenRecordOpt.get();
@@ -82,7 +81,7 @@ public class RefreshTokenService {
             return ReissueResponse.of(newAccessToken, newRefreshToken);
 
         } else {
-            Optional<RefreshToken> previousTokenRecordOpt = refreshTokenRepository.findByMemberIdAndPreviousTokenValueAndRevokedFalse(memberId, hashedSubmittedRefreshToken);
+            Optional<RefreshToken> previousTokenRecordOpt = refreshTokenRepository.findByMemberIdAndPreviousTokenValueAndRevokedFalse(memberId, submittedRefreshToken);
 
             if (previousTokenRecordOpt.isPresent()) {
                 List<RefreshToken> activeTokens = refreshTokenRepository.findByMemberIdAndRevokedFalse(memberId);
