@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/songs")
+@RequestMapping("/api/v1/songs")
 @RequiredArgsConstructor
 public class SongController {
 
