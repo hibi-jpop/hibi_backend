@@ -5,8 +5,6 @@ import com.hibi.server.domain.song.dto.request.SongCreateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Table(name = "songs")
 @Getter
@@ -32,23 +30,18 @@ public class Song {
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
 
-    @Column(name = "posted_at", nullable = false)
-    private LocalDate postedAt;
-
     public static Song of(SongCreateRequest request, Artist artist) {
         return Song.builder()
                 .titleKor(request.titleKor())
                 .titleEng(request.titleEng())
                 .titleJp(request.titleJp())
-                .postedAt(request.postedAt())
                 .artist(artist)
                 .build();
     }
 
-    public void updateSong(String titleKor, String titleEng, String titleJp, LocalDate postedAt) {
+    public void updateSong(String titleKor, String titleEng, String titleJp) {
         this.titleKor = titleKor;
         this.titleEng = titleEng;
         this.titleJp = titleJp;
-        this.postedAt = postedAt;
     }
 }

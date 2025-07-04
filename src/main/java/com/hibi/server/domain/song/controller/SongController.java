@@ -28,27 +28,8 @@ public class SongController {
             description = "새로운 노래를 등록합니다. 요청 본문에 제목, 아티스트, 게시일 등 노래 정보를 포함해야 합니다."
     )
     public ResponseEntity<SuccessResponse<?>> createSong(@RequestBody @Valid SongCreateRequest request) {
+        songService.create(request);
         return ResponseEntity.ok(SuccessResponse.success("노래 생성 성공"));
-    }
-
-    @GetMapping("/{id}")
-    @Operation(
-            summary = "ID로 노래 조회",
-            description = "노래 ID를 기반으로 단일 노래 정보를 조회합니다."
-    )
-    public ResponseEntity<SuccessResponse<SongResponse>> getSongById(@PathVariable Long id) {
-        return ResponseEntity.ok(SuccessResponse.success("노래 조회 성공", songService.getById(id)));
-    }
-
-    @GetMapping("/by-date")
-    @Operation(
-            summary = "날짜로 노래 조회",
-            description = "입력한 날짜(postedAt)에 등록된 노래 정보를 조회합니다. 날짜는 yyyy-MM-dd 형식입니다."
-    )
-    public ResponseEntity<SuccessResponse<SongResponse>> getSongByPostedDate(
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
-    ) {
-        return ResponseEntity.ok(SuccessResponse.success("노래 조회 성공", songService.getByDate(date)));
     }
 
     @PutMapping("/{id}")
@@ -79,6 +60,26 @@ public class SongController {
     )
     public ResponseEntity<SuccessResponse<List<SongResponse>>> getAllSongs() {
         return ResponseEntity.ok(SuccessResponse.success("모든 노래 조회 성공", songService.getAll()));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "ID로 노래 조회",
+            description = "노래 ID를 기반으로 단일 노래 정보를 조회합니다."
+    )
+    public ResponseEntity<SuccessResponse<SongResponse>> getSongById(@PathVariable Long id) {
+        return ResponseEntity.ok(SuccessResponse.success("노래 조회 성공", songService.getById(id)));
+    }
+
+    @GetMapping("/by-date")
+    @Operation(
+            summary = "날짜로 노래 조회",
+            description = "입력한 날짜(postedAt)에 등록된 노래 정보를 조회합니다. 날짜는 yyyy-MM-dd 형식입니다."
+    )
+    public ResponseEntity<SuccessResponse<SongResponse>> getSongByPostedDate(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        return ResponseEntity.ok(SuccessResponse.success("노래 조회 성공", songService.getByDate(date)));
     }
 
     @GetMapping("/by-month")

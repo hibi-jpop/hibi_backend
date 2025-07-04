@@ -55,8 +55,7 @@ public class SongService {
         song.updateSong(
                 request.titleKor(),
                 request.titleEng(),
-                request.titleJp(),
-                request.postedAt()
+                request.titleJp()
         );
 
         return SongResponse.from(song);
