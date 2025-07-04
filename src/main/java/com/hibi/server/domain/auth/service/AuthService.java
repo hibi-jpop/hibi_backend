@@ -64,14 +64,14 @@ public class AuthService {
         String accessToken = jwtUtils.generateAccessToken(authentication);
         String refreshToken = refreshTokenService.createAndSaveRefreshToken(memberId, authentication);
 
-        return SignInResponse.of(accessToken, refreshToken);
+        return SignInResponse.of(accessToken, refreshToken, memberId, customUserDetails.getRole());
     }
 
     @Transactional
     public void signOut(Long memberId) {
         refreshTokenService.invalidateAllRefreshTokensForMember(memberId);
     }
-    
+
     public boolean checkEmailAvailability(String email) {
         memberValidator.validateEmail(email);
         return !memberRepository.existsByEmail(email);

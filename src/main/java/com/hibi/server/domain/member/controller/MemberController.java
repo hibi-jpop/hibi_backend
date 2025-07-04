@@ -28,8 +28,18 @@ public class MemberController {
     @GetMapping("/me")
     public ResponseEntity<SuccessResponse<MemberProfileResponse>> getMyInfo(@AuthMember CustomUserDetails userDetails) {
         long memberId = userDetails.getId();
-        MemberProfileResponse memberProfile = memberService.getMemberProfileById(memberId);
+        MemberProfileResponse memberProfile = memberService.getMyProfileById(memberId);
         return ResponseEntity.ok(SuccessResponse.success("내 정보 조회에 성공했습니다.", memberProfile));
+    }
+
+    @Operation(
+            summary = "특정 회원 정보 조회 (오픈된 프로필)",
+            description = "특정 memberId를 가진 회원의 프로필 정보를 조회합니다. 관리자 권한이 필요할 수 있습니다."
+    )
+    @GetMapping("/info/{memberId}")
+    public ResponseEntity<SuccessResponse<MemberProfileResponse>> getMemberById(@PathVariable Long memberId) {
+        MemberProfileResponse memberProfile = memberService.getMemberProfileById(memberId);
+        return ResponseEntity.ok(SuccessResponse.success(memberId + "번 회원 정보 조회 성공", memberProfile));
     }
 
     @Operation(
@@ -53,16 +63,6 @@ public class MemberController {
     public ResponseEntity<SuccessResponse<?>> withdrawMember(@AuthMember CustomUserDetails userDetails) {
         memberService.withdrawMember(userDetails.getId());
         return ResponseEntity.ok(SuccessResponse.success("회원 탈퇴에 성공했습니다."));
-    }
-
-    @Operation(
-            summary = "특정 회원 정보 조회 (관리자용)",
-            description = "특정 memberId를 가진 회원의 프로필 정보를 조회합니다. 관리자 권한이 필요할 수 있습니다."
-    )
-    @GetMapping("/info/{memberId}")
-    public ResponseEntity<SuccessResponse<MemberProfileResponse>> getMemberById(@PathVariable Long memberId) {
-        MemberProfileResponse memberProfile = memberService.getMemberProfileById(memberId);
-        return ResponseEntity.ok(SuccessResponse.success(memberId + "번 회원 정보 조회 성공", memberProfile));
     }
 
     @Operation(

@@ -28,6 +28,12 @@ public class MemberService {
     private final RefreshTokenService refreshTokenService;
     private final MemberValidator memberValidator;
 
+    public MemberProfileResponse getMyProfileById(long id) {
+        return memberRepository.findByIdAndDeletedAtIsNull(id)
+                .map(MemberProfileResponse::from)
+                .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+    }
+
     public MemberProfileResponse getMemberProfileById(long id) {
         return memberRepository.findByIdAndDeletedAtIsNull(id)
                 .map(member -> MemberProfileResponse.of(member.getNickname()))

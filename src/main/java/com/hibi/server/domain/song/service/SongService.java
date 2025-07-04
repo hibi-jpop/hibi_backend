@@ -9,7 +9,6 @@ import com.hibi.server.domain.song.entity.Song;
 import com.hibi.server.domain.song.repository.SongRepository;
 import com.hibi.server.global.exception.CustomException;
 import com.hibi.server.global.exception.ErrorCode;
-import com.hibi.server.global.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -27,30 +26,29 @@ public class SongService {
     private final ArtistRepository artistRepository;
 
     @Transactional
-    public SuccessResponse<?> create(SongCreateRequest request) {
+    public void create(SongCreateRequest request) {
         Artist artist = artistRepository.findById(request.artistId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
         Song song = Song.of(request, artist);
         songRepository.save(song);
-        return SuccessResponse.success("노래가 성공적으로 생성되었습니다.");
     }
 
-    public SuccessResponse<SongResponse> getById(Long id) {
+    public SongResponse getById(Long id) {
         Song song = songRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
-        return SuccessResponse.success("노래 조회 성공", SongResponse.from(song));
+        return SongResponse.from(song);
     }
 
-    public SuccessResponse<SongResponse> getByDate(LocalDate date) {
+    public SongResponse getByDate(LocalDate date) {
         Song song = songRepository.findByPostedAt(date)
                 .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
-        return SuccessResponse.success("노래 조회 성공", SongResponse.from(song));
+        return SongResponse.from(song);
     }
 
     @Transactional
-    public SuccessResponse<SongResponse> update(Long id, SongUpdateRequest request) {
+    public SongResponse update(Long id, SongUpdateRequest request) {
         Song song = songRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
@@ -61,24 +59,28 @@ public class SongService {
                 request.postedAt()
         );
 
-        return SuccessResponse.success("노래가 성공적으로 수정되었습니다.", SongResponse.from(song));
+        return SongResponse.from(song);
     }
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public SuccessResponse<?> delete(Long id) {
+    public void delete(Long id) {
         if (!songRepository.existsById(id)) {
             throw new CustomException(ErrorCode.ENTITY_NOT_FOUND);
         }
 
         songRepository.deleteById(id);
-        return SuccessResponse.success("노래가 성공적으로 삭제되었습니다.");
     }
 
-    public SuccessResponse<List<SongResponse>> getAll() {
-        List<SongResponse> songs = songRepository.findAll().stream()
+    public List<SongResponse> getAll() {
+        return songRepository.findAll().stream()
                 .map(SongResponse::from)
                 .toList();
-        return SuccessResponse.success("노래 전체 조회 성공", songs);
+    }
+
+    public List<SongResponse> getByMonth(int year, int month) {
+        return songRepository.findByPostedAtYearAndMonth(year, month).stream()
+                .map(SongResponse::from)
+                .toList();
     }
 }
