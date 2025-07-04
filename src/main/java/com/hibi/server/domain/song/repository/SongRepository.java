@@ -15,8 +15,9 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     List<Song> findByArtistId(Long artistId);
 
-    Optional<Song> findByPostedAt(LocalDate postedAt);
+    @Query("SELECT p.song FROM Post p WHERE p.postedAt = :postedAt")
+    Optional<Song> findByPostedAt(@Param("postedAt") LocalDate postedAt);
 
-    @Query("SELECT s FROM Song s WHERE YEAR(s.postedAt) = :year AND MONTH(s.postedAt) = :month")
+    @Query("SELECT p.song FROM Post p WHERE YEAR(p.postedAt) = :year AND MONTH(p.postedAt) = :month")
     List<Song> findByPostedAtYearAndMonth(@Param("year") int year, @Param("month") int month);
 }
