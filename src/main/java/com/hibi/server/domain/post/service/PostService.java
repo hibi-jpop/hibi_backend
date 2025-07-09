@@ -15,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,9 @@ public class PostService {
 
     @Transactional
     public PostResponse create(PostCreateRequest request) {
+        if (postRepository.existsByPostedAt(request.postedAt())) {
+            throw new CustomException(ErrorCode.POST_ALREADY_EXISTS);
+        }
         Song song = songRepository.findById(request.songId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
 
@@ -67,8 +72,9 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    public List<PostResponse> getByPostedAt(LocalDate date) {
-        return postRepository.findByPostedAt(date);
+    public PostResponse getByPostedAt(LocalDate date) {
+        return postRepository.findByPostedAt(date)
+                .orElseThrow(() -> new CustomException(ErrorCode.ENTITY_NOT_FOUND));
     }
 
     public List<PostResponse> getByPostedAtBetween(LocalDate startDate, LocalDate endDate) {

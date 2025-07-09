@@ -40,8 +40,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 JOIN s.artist a
                 WHERE p.postedAt = :date
             """)
-    List<PostResponse> findByPostedAt(@Param("date") LocalDate date);
-
+    Optional<PostResponse> findByPostedAt(@Param("date") LocalDate date);
 
     @Query("""
                 SELECT new com.hibi.server.domain.post.dto.response.PostResponse(
@@ -58,4 +57,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("endDate") LocalDate endDate
     );
 
+    boolean existsByPostedAt(LocalDate postedAt);
 }

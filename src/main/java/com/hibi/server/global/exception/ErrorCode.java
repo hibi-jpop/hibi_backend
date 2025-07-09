@@ -34,11 +34,15 @@ public enum ErrorCode {
     PASSWORD_TOO_SHORT("A026", "비밀번호는 최소 8자 이상이어야 합니다.", HttpStatus.BAD_REQUEST),
     NICKNAME_REQUIRED("A027", "닉네임은 필수 입력 값입니다.", HttpStatus.BAD_REQUEST),
     NICKNAME_INVALID_LENGTH("A028", "닉네임은 2자 이상 20자 이하이어야 합니다.", HttpStatus.BAD_REQUEST),
-    
+
+    //post 관련 에러 코드
+    POST_ALREADY_EXISTS("P001", "해당 날짜에 이미 포스트가 존재합니다.", HttpStatus.CONFLICT),
+
     // --- 일반적인 에러 코드 ---
     INVALID_INPUT_VALUE("C001", "잘못된 입력 값입니다.", HttpStatus.BAD_REQUEST), // 400 Bad Request
     ENTITY_NOT_FOUND("C002", "요청하신 자원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND), // 404 Not Found
     INTERNAL_SERVER_ERROR("S001", "서버 내부 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+
 
     private final String code;
     private final String message;
