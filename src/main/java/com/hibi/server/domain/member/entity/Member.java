@@ -83,7 +83,11 @@ public class Member {
         this.deletedAt = deletedAt;
     }
 
-    public boolean isDeleted() {
-        return this.deletedAt != null;
+    public boolean isDeleted() { return this.deletedAt != null; }
+
+    public void reactivateAccount(String encodedPassword, String nickname) {
+        this.deletedAt = null;
+        this.password = encodedPassword;
+        this.nickname = nickname;
     }
 }

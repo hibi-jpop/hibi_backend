@@ -7,6 +7,7 @@ import com.hibi.server.domain.auth.dto.response.SignInResponse;
 import com.hibi.server.domain.auth.service.AuthService;
 import com.hibi.server.domain.auth.service.RefreshTokenService;
 import com.hibi.server.domain.member.dto.response.AvailabilityResponse;
+import com.hibi.server.domain.member.validator.MemberValidator;
 import com.hibi.server.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -23,6 +24,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
+    private final MemberValidator memberValidator;
 
     @PostMapping("/sign-up")
     public ResponseEntity<SuccessResponse<?>> signup(@Valid @RequestBody SignUpRequest request) {
@@ -51,9 +53,9 @@ public class AuthController {
             description = "주어진 이메일이 현재 사용 가능한지 확인합니다."
     )
     @GetMapping("/check-email")
-    public ResponseEntity<SuccessResponse<AvailabilityResponse>> checkEmailAvailability(@RequestParam String email) {
-        boolean isAvailable = authService.checkEmailAvailability(email);
-        return buildAvailabilityResponse(email, isAvailable, AvailabilityResponse::forEmail);
+    public ResponseEntity<SuccessResponse<?>> checkEmailAvailability(@RequestParam String email) {
+        authService.checkEmailAvailability(email);
+        return ResponseEntity.ok(SuccessResponse.success(email + "은(는) 사용 가능 합니다."));
     }
 
     @Operation(
@@ -61,21 +63,9 @@ public class AuthController {
             description = "주어진 닉네임이 현재 사용 가능한지 확인합니다."
     )
     @GetMapping("/check-nickname")
-    public ResponseEntity<SuccessResponse<AvailabilityResponse>> checkNicknameAvailability(@RequestParam String nickname) {
-        boolean isAvailable = authService.checkNicknameAvailability(nickname);
-        return buildAvailabilityResponse(nickname, isAvailable, AvailabilityResponse::forNickname);
-    }
+    public ResponseEntity<SuccessResponse<?>> checkNicknameAvailability(@RequestParam String nickname) {
+        memberValidator.validateNickname(nickname, null);
+        return ResponseEntity.ok(SuccessResponse.success(nickname + "은(는) 사용 가능 합니다."));
 
-    private ResponseEntity<SuccessResponse<AvailabilityResponse>> buildAvailabilityResponse(
-            String target,
-            boolean isAvailable,
-            BiFunction<String, Boolean, AvailabilityResponse> responseFactory
-    ) {
-        String message = isAvailable
-                ? target + "은(는) 사용 가능합니다."
-                : target + "은(는) 이미 사용 중입니다.";
-
-        AvailabilityResponse response = responseFactory.apply(target, isAvailable);
-        return ResponseEntity.ok(SuccessResponse.success(message, response));
     }
 }

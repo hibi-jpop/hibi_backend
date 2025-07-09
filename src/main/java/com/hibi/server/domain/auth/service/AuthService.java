@@ -19,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -41,17 +43,23 @@ public class AuthService {
         memberValidator.validateEmail(email);
         memberValidator.validatePassword(password);
         memberValidator.validateNickname(nickname, null); // 신규 가입: 이전 닉네임 없음
+        Optional<Member> deleted = memberRepository.findByEmailAndDeletedAtIsNotNull(email);
 
-        Member member = Member.of(
-                email,
-                passwordEncoder.encode(password),
-                nickname,
-                ProviderType.NATIVE,
-                null,
-                null,
-                UserRoleType.USER
-        );
-        memberRepository.save(member);
+        if (deleted.isPresent()) {
+            Member member = deleted.get();
+            member.reactivateAccount(passwordEncoder.encode(password), nickname);
+        } else {
+            Member member = Member.of(
+                    email,
+                    passwordEncoder.encode(password),
+                    nickname,
+                    ProviderType.NATIVE,
+                    null,
+                    null,
+                    UserRoleType.USER
+            );
+            memberRepository.save(member);
+        }
     }
 
     @Transactional
@@ -72,13 +80,11 @@ public class AuthService {
         refreshTokenService.invalidateAllRefreshTokensForMember(memberId);
     }
 
-    public boolean checkEmailAvailability(String email) {
+    public void checkEmailAvailability(String email) {
         memberValidator.validateEmail(email);
-        return !memberRepository.existsByEmail(email);
     }
 
-    public boolean checkNicknameAvailability(String nickname) {
+    public void checkNicknameAvailability(String nickname) {
         memberValidator.validateNickname(nickname, null);
-        return !memberRepository.existsByNickname(nickname);
     }
 }

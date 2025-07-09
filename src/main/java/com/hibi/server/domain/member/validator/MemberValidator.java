@@ -27,7 +27,7 @@ public class MemberValidator {
             throw new CustomException(ErrorCode.INVALID_EMAIL_FORMAT);
         }
 
-        if (memberRepository.existsByEmail(email)) {
+        if (memberRepository.existsByEmailAndDeletedAtIsNull(email)) {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
     }
