@@ -1,6 +1,5 @@
 package com.hibi.server.global.config;
 
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -45,7 +44,40 @@ public class SwaggerConfig {
     public GroupedOpenApi authApi() {
         return GroupedOpenApi.builder()
                 .group("auth")
-                .pathsToMatch("/api/" + apiVersion + "/auth/**") // /api/auth로 시작하는 경로만 포함
+                .pathsToMatch("/api/" + apiVersion + "/auth/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi postApi() {
+        return GroupedOpenApi.builder()
+                .group("post")
+                .pathsToMatch("/api/" + apiVersion + "/posts/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi songApi() {
+        return GroupedOpenApi.builder()
+                .group("song")
+                .pathsToMatch("/api/" + apiVersion + "/songs/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi memberApi() {
+        return GroupedOpenApi.builder()
+                .group("member")
+                .pathsToMatch("/api/" + apiVersion + "/members/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi artistApi() {
+        return GroupedOpenApi.builder()
+                .group("member")
+                .pathsToMatch("/api/" + apiVersion + "/members/**")
+                .build();
+    }
+
 }

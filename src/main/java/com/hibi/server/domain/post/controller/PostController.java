@@ -1,6 +1,7 @@
 package com.hibi.server.domain.post.controller;
 
 import com.hibi.server.domain.post.dto.request.PostCreateRequest;
+import com.hibi.server.domain.post.dto.request.PostUpdateRequest;
 import com.hibi.server.domain.post.dto.response.PostResponse;
 import com.hibi.server.domain.post.service.PostService;
 import com.hibi.server.global.response.SuccessResponse;
@@ -29,6 +30,29 @@ public class PostController {
     public ResponseEntity<SuccessResponse<PostResponse>> create(@RequestBody PostCreateRequest request) {
         PostResponse response = postService.create(request);
         return ResponseEntity.ok(SuccessResponse.success("게시글 생성 성공", response));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(
+            summary = "게시글 수정",
+            description = "ID를 통해 특정 게시글의 내용을 수정합니다."
+    )
+    public ResponseEntity<SuccessResponse<PostResponse>> update(
+            @PathVariable Long id,
+            @RequestBody PostUpdateRequest request
+    ) {
+        PostResponse response = postService.update(id, request);
+        return ResponseEntity.ok(SuccessResponse.success("게시글 수정 성공", response));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(
+            summary = "게시글 삭제",
+            description = "ID를 통해 특정 게시글을 삭제합니다."
+    )
+    public ResponseEntity<SuccessResponse<Void>> delete(@PathVariable Long id) {
+        postService.delete(id);
+        return ResponseEntity.ok(SuccessResponse.success("게시글 삭제 성공", null));
     }
 
     @GetMapping("/{id}")
